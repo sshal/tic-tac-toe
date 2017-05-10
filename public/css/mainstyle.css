@@ -1,0 +1,156 @@
+* {
+    color: white;
+    text-align: center;
+}
+table {
+    border-collapse: collapse;
+    font-size: 3.5em;
+    margin: 0 auto;
+}
+td {
+    width: 90px;
+    height: 90px;
+}
+#a2, #c2, #b2 {
+    border-right: 3px solid white;
+    border-left: 3px solid white;
+}
+#b1, #b3, #b2 {
+    border-top: 3px solid white;
+    border-bottom: 3px solid white;
+}
+.score_header {
+    font-size: 1.6em;
+    font-family: 'Courgette', cursive;
+}
+.score_header, .score_body {
+    width: 33.3%;
+    display: inline-block;
+    margin: 5px 0;
+}
+.score_body {
+    font-size: 2em;
+    font-family: 'Graduate', cursive;
+}
+.mainboard, .fieldsboard {
+    position: relative;
+}
+.mainboard {
+    background: rgb(201, 144, 88);
+    padding: 1.5em;
+    width: 320px;
+    border-radius: 5%;
+    box-shadow: 0px 5px 10px 1px grey, 0px 0px 10px grey;
+    margin: 0 auto;
+}
+.fieldsboard {
+    background: #404549 url("https://image.ibb.co/hTZsfk/dbdccc3bc818fcfb33533ad737bf59b5.jpg");
+    padding: 15px;
+    border-radius: 5%;
+    box-shadow: 0px 0px 15px black inset, 0px 0px 15px black inset;
+}
+.scoreboard {
+    background: #1A3A2B;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    width: 320px;
+    box-shadow: 0px 0px 10px grey inset, 0px 0px 10px grey inset;
+}
+.winner {
+    color: yellow;
+    background: black;
+    transition: all 0.5s linear;
+}
+.dispnone {
+    display: none;
+}
+.visibnone {
+    visibility: hidden;
+}
+@keyframes showwinmess {
+    0% {opacity: 0;}
+    25% {opacity: 0.9;}
+    50% {opacity: 0.9;}
+    75% {opacity: 0.9;}
+    100% {opacity: 0;}
+}
+@keyframes hidemess {
+    0% {opacity: 1;}
+    100% {opacity: 0;}
+}
+#winmess, #choicesign, #choiceplayer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin: -15px;
+    background: black;
+    opacity: 1;
+    border-radius: inherit;
+    z-index: 1;
+}
+#winmess {
+    opacity: 0;
+}
+.hidequestion {
+    animation: hidemess 0.5s linear;
+    opacity: 0;
+}
+.textmess {
+    font-size: 2.0em;
+    position: relative;
+    opacity: 1;
+    z-index: 2;
+    font-family: 'Kurale', serif;
+}
+.pltop {
+    margin-top: 10%;
+}
+.pl {
+    margin: 0 10px;
+}
+.signtop {
+    top: 10%;
+}
+.signs {
+    padding: 0 15px;
+    font-size: 1.5em;
+}
+.pl:hover, .signs:hover, .backarrow:hover, .butreset:hover {
+    color: green;
+    cursor: pointer;
+}
+.backarrow {
+    margin-top: 20px;
+    font-size: 0.8em;
+}
+.wintop {
+    top: 40%;
+}
+.inform{
+    animation: showwinmess 3s linear 1s;
+}
+.turn {
+    color: yellow;
+}
+.butreset {
+    margin: 15px auto 0 auto;
+    padding: 3px;
+    border-radius: 25%;
+    width: 30%;
+    background: brown;
+    font-size: 1.4em;
+    box-shadow: 0 0 5px 0 grey;
+}
+.butreset:hover {
+    background: black;
+}
+.foot {
+    color: black;
+    margin-top: 20px;
+    font-family: 'Pacifico', cursive;
+    font-size: 1.5em;
+}
+.foot a {
+    color: #0275D8;
+    text-decoration: none;
+}
