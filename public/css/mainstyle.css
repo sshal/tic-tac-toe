@@ -4,12 +4,14 @@
 }
 table {
     border-collapse: collapse;
-    font-size: 3.5em;
+    font-size: 3.0em;
+}
+table, .foot {
     margin: 0 auto;
 }
 td {
-    width: 90px;
-    height: 90px;
+    width: 70px;
+    height: 70px;
 }
 #a2, #c2, #b2 {
     border-right: 3px solid white;
@@ -20,16 +22,16 @@ td {
     border-bottom: 3px solid white;
 }
 .score_header {
-    font-size: 1.6em;
+    font-size: 1.4em;
     font-family: 'Courgette', cursive;
 }
 .score_header, .score_body {
     width: 33.3%;
     display: inline-block;
-    margin: 5px 0;
+    margin-top: 5px;
 }
 .score_body {
-    font-size: 2em;
+    font-size: 1.7em;
     font-family: 'Graduate', cursive;
 }
 .mainboard, .fieldsboard {
@@ -37,8 +39,9 @@ td {
 }
 .mainboard {
     background: rgb(201, 144, 88);
-    padding: 1.5em;
-    width: 320px;
+    padding: 1em;
+    padding-bottom: 0.4em;
+    width: 270px;
     border-radius: 5%;
     box-shadow: 0px 5px 10px 1px grey, 0px 0px 10px grey;
     margin: 0 auto;
@@ -51,15 +54,14 @@ td {
 }
 .scoreboard {
     background: #1A3A2B;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     border-radius: 5px;
-    width: 320px;
+    width: 270px;
     box-shadow: 0px 0px 10px grey inset, 0px 0px 10px grey inset;
 }
 .winner {
     color: yellow;
     background: black;
-    transition: all 0.5s linear;
 }
 .dispnone {
     display: none;
@@ -96,7 +98,7 @@ td {
     opacity: 0;
 }
 .textmess {
-    font-size: 2.0em;
+    font-size: 1.8em;
     position: relative;
     opacity: 1;
     z-index: 2;
@@ -113,14 +115,14 @@ td {
 }
 .signs {
     padding: 0 15px;
-    font-size: 1.5em;
+    font-size: 1.4em;
 }
 .pl:hover, .signs:hover, .backarrow:hover, .butreset:hover {
     color: green;
     cursor: pointer;
 }
 .backarrow {
-    margin-top: 20px;
+    margin-top: 15px;
     font-size: 0.8em;
 }
 .wintop {
@@ -133,12 +135,11 @@ td {
     color: yellow;
 }
 .butreset {
-    margin: 15px auto 0 auto;
-    padding: 3px;
+    margin: 5px auto 0 auto;
     border-radius: 25%;
     width: 30%;
     background: brown;
-    font-size: 1.4em;
+    font-size: 1.2em;
     box-shadow: 0 0 5px 0 grey;
 }
 .butreset:hover {
@@ -146,9 +147,10 @@ td {
 }
 .foot {
     color: black;
-    margin-top: 20px;
+    margin-top: 10px;
     font-family: 'Pacifico', cursive;
-    font-size: 1.5em;
+    font-size: 1.2em;
+    width: 270px;
 }
 .foot a {
     color: #0275D8;
