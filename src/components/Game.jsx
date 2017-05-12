@@ -3,37 +3,11 @@ var React = require('react');
 class Game extends React.Component {
     constructor(props) {
         super(props);
-        this.infi= {
-            "fields": {
-                "a1": null,
-                "a2": null,
-                "a3": null,
-                "b1": null,
-                "b2": null,
-                "b3": null,
-                "c1": null,
-                "c2": null,
-                "c3": null
-            }
-        };
-        this.inst = {
-            "status": {
-                "sign": "X",
-                "turn": "Player1",
-                "count": 0,
-                "winner": "",
-                "wincombo": "",
-                "message": ""
-            }
-        };
-        this.insc = {
-            "score": {
-                "player1": 0,
-                "player2": 0,
-                "draw": 0
-            }
-        };
-        this.state = Object.assign({}, this.infi, this.inst, this.insc);
+        this.fields = {"a1": "","a2": "","a3": "","b1": "","b2": "",
+                       "b3": "","c1": "","c2": "","c3": ""};
+        this.status = {"sign": "X", "turn": "Player1", "message": ""};
+        this.history = [];
+        this.score = {"player1": 0, "player2": 0, "draw": 0}
         this.combinations = [
             ["a1", "a2", "a3"],
             ["b1", "b2", "b3"],
@@ -44,24 +18,27 @@ class Game extends React.Component {
             ["a1", "b2", "c3"],
             ["a3", "b2", "c1"]
         ];
-        this.makeChoice = this.makeChoice.bind(this);
-        this.clearBoard = this.clearBoard.bind(this);
-        this.checkWinner = this.checkWinner.bind(this);
-        this.toggleMessage = this.toggleMessage.bind(this);
-        this.changeTurn = this.changeTurn.bind(this);
-        this.setupTurn = this.setupTurn.bind(this);
+        this.initial = this.initial.bind(this);
         this.setupOppo = this.setupOppo.bind(this);
         this.goBack = this.goBack.bind(this);
+        this.setupTurn = this.setupTurn.bind(this);
+        this.makeChoice = this.makeChoice.bind(this);
+        this.changeTurn = this.changeTurn.bind(this);
+        this.compAction = this.compAction.bind(this);
+        this.checkWinner = this.checkWinner.bind(this);
+        this.toggleMessage = this.toggleMessage.bind(this);
+        this.clearBoard = this.clearBoard.bind(this);
         this.resetGame = this.resetGame.bind(this);
     }
-    setupOppo(e) {
-        var state = Object.assign({}, this.state);
-        if (e.target.innerText === "Computer") {
-            state.comp = true;
-        } else {
-            state.comp = false;
+    initial() {
+        this.status = {"sign": "X", "turn": "Player1", "message": ""};
+        for (var key of Object.keys(this.fields)) {
+            this.fields[key] = "";
         }
-        this.setState(state);
+        this.history = [];
+    }
+    setupOppo(e) {
+        this.comp = (e.target.innerText === "Computer") ? true : false;
         document.getElementById('choiceplayer').classList.add('dispnone');
         document.getElementById('choicesign').classList.remove('dispnone');
     }
@@ -70,17 +47,21 @@ class Game extends React.Component {
         document.getElementById('choiceplayer').classList.remove('dispnone');
     }
     setupTurn(e) {
-        var status = Object.assign({}, this.state.status);
+        this.initial();
+        var status = this.status;
         if (e.target.innerText === "X") {
+            this.firstX = true;
             status.turn = "Player1";
-            this.setState({"firstX": true});
             document.getElementById('pl1').classList.add('turn');
         } else {
+            this.firstX = false;
             status.turn = "Player2";
-            this.setState({"firstX": false});
             document.getElementById('pl2').classList.add('turn');
         }
-        this.setState({"status": status});
+        (this.comp && !this.firstX) ?
+            (document.getElementById('compthink').classList.remove('dispnone'),
+            setTimeout(this.compAction, 1000)) : -1;
+        this.setState({});
         document.getElementById('choicesign').classList.add('hidequestion');
         setTimeout(function(){
             document.getElementById('choicesign').classList.add('dispnone');
@@ -89,17 +70,18 @@ class Game extends React.Component {
         }, 500);
     }
     makeChoice(e) {
-        var temp = e.target.id,
-            fields = Object.assign({}, this.state.fields),
-            status = Object.assign({}, this.state.status);
-        if (fields[temp] === null) {
-            fields[temp] = status.sign;
-            status.count += 1;
-            this.setState({fields: fields, status: status}, this.checkWinner);
+        var variant = e.target.id,
+            fields = this.fields;
+        if (!fields[variant]) {
+            fields[variant] = this.status.sign;
+            this.history.push(variant);
+            this.checkWinner();
         }
     }
-    changeTurn(st) {
-        if (st === "Player1") {
+    changeTurn() {
+        this.status.sign = (this.status.sign === "X") ? "O" : "X";
+        this.status.turn = (this.status.turn === "Player1") ? "Player2" : "Player1";
+        if (this.status.turn === "Player1") {
             document.getElementById('pl2').classList.remove('turn');
             document.getElementById('pl1').classList.add('turn');
         } else {
@@ -107,45 +89,112 @@ class Game extends React.Component {
             document.getElementById('pl1').classList.remove('turn');
         }
     }
+    compAction() {
+        var fields = this.fields,
+            status = this.status,
+            history = this.history,
+            majorcells = ["a1", "a3", "c1", "c3", "b2"],
+            othercells = ["a2", "b1", "b3", "c2"],
+            pos = "";
+        if (history.length === 0) {
+            pos = majorcells[Math.floor(Math.random()*5)];
+        } else if (history.length !== 0 && !fields["b2"]) {
+            pos = "b2";
+        } else {
+            var result = [];
+            for (var comb of this.combinations) {
+                var full = [], emp = [];
+                for (var el of comb) {
+                    (history.includes(el)) ? full.push(el) : emp.push(el);
+                }
+                if (full.length === 2 && fields[full[0]] === fields[full[1]]) {
+                    result.push([full, emp]);
+                }
+            }
+            if (!result.length) {
+                var emMaj = majorcells.filter((a) => !fields[a]);
+                var emOth = othercells.filter((a) => !fields[a]);
+                if (this.firstX && history.length === 3) {
+                    var h0 = history[0], h2 = history[2];
+                    if (fields["b2"] !== "X" && majorcells.includes(h0) && majorcells.includes(h2)) {
+                        pos = emOth[Math.floor(Math.random()*emOth.length)];
+                    }   //exclude player's win (1/3)
+                        else if (majorcells.includes(h0) && othercells.includes(h2) ||
+                                othercells.includes(h0) && majorcells.includes(h2)) {
+                        var temp = (othercells.includes(h0)) ? h0 : h2;
+                        switch(temp) {
+                            case "a2":
+                                pos = "a1";
+                            break;
+                            case "b1":
+                                pos = "c1";
+                            break;
+                            case "c2":
+                                pos = "c3";
+                            break;
+                            case "b3":
+                                pos = "a3";
+                        }
+                    } else {
+                        pos = emMaj[Math.floor(Math.random()*emMaj.length)];
+                    }
+
+                } else {
+                    pos = emMaj.length ? emMaj[Math.floor(Math.random()*emMaj.length)] :
+                                         emOth[Math.floor(Math.random()*emOth.length)];
+                }
+            } else {
+                for (var variant of result) {
+                    (fields[variant[0][0]] === status.sign) ? pos = variant[1][0] : -1;
+                }
+                if (!pos) {
+                    for (var variant of result) {
+                        (fields[variant[0][0]] !== status.sign) ? pos = variant[1][0] : -1;
+                    }
+                }
+            }
+        }
+        fields[pos] = status.sign;
+        history.push(pos);
+        document.getElementById('compthink').classList.add('dispnone');
+        this.setState({}, this.checkWinner);
+    }
     checkWinner() {
-        var fields = Object.assign({}, this.state.fields),
-            score = Object.assign({}, this.state.score),
-            status = Object.assign({}, this.state.status);
+        var fields = this.fields,
+            status = this.status;
         for (var comb of this.combinations) {
-            if (fields[comb[0]] && fields[comb[0]] === fields[comb[1]] && fields[comb[1]] === fields[comb[2]]) {
-                status.wincombo = comb;
-                for (let cell of status.wincombo) {
+            if (fields[comb[0]] && fields[comb[0]] === fields[comb[1]] &&
+                fields[comb[1]] === fields[comb[2]]) {
+                for (let cell of comb) {
                     document.getElementById(cell).classList.add('winner');
+                    setTimeout(function() {
+                        document.getElementById(cell).classList.remove('winner');
+                    }, 4500);
                 }
                 if (status.turn === "Player1") {
-                    status.winner = "Player1";
-                    score.player1 += 1;
+                    this.score.player1 += 1;
                     status.message = "Player 1 wins!";
                 } else {
-                    status.winner = "Player2";
-                    score.player2 += 1;
+                    this.score.player2 += 1;
                     status.message = "Player 2 wins!";
                 }
             }
         }
-        if (status.count === 9 && status.winner === "") {
-            status.winner = "Draw";
-            score.draw += 1;
+        if (this.history.length === 9 && status.message === "") {
+            this.score.draw += 1;
             status.message = "Draw, Friends! :)";
         }
-        if (!status.winner) {
-            status.sign = (status.sign === "X") ? "O" : "X";
-            status.turn = (status.turn === "Player1") ? "Player2" : "Player1";
-            this.changeTurn(status.turn);
+        !status.message ? this.changeTurn() : -1;
+        if (status.message) {
+            this.toggleMessage();
+            document.getElementById('res').classList.add('visibnone');
+            setTimeout(this.toggleMessage, 4500);
+            setTimeout(this.clearBoard, 4500);
+        } else if (this.comp === true && status.turn === "Player2") {
+            document.getElementById('compthink').classList.remove('dispnone');
+            setTimeout(this.compAction, 1000);
         }
-        this.setState({fields: fields, score: score, status: status}, function(){
-            if (this.state.status.winner) {
-                this.toggleMessage();
-                document.getElementById('res').classList.add('visibnone');
-                setTimeout(this.toggleMessage, 4500);
-                setTimeout(this.clearBoard, 4500);
-            }
-        });
+        this.setState({});
     }
     toggleMessage() {
         var message = document.getElementById('winmess').classList;
@@ -155,34 +204,36 @@ class Game extends React.Component {
         document.getElementById('pl2').classList.remove('turn');
     }
     clearBoard() {
-        var copyCombo = this.state.status.wincombo.slice(0,);
-        for (let cell of copyCombo) {
-            document.getElementById(cell).classList.remove('winner');
-        }
-        var state = Object.assign({}, this.infi, this.inst);
-        state.status.turn = (this.state.firstX) ? "Player1" : "Player2";
-        this.setState(state, this.changeTurn(state.status.turn));
+        this.initial();
+        this.status.turn = (this.firstX) ? "Player1" : "Player2";
+        this.setState({}, function() {
+            document.getElementById("pl" + this.status.turn[6]).classList.add('turn');
+        });
         document.getElementById('res').classList.remove('visibnone');
+        (this.comp && !this.firstX) ?
+            (document.getElementById('compthink').classList.remove('dispnone'),
+            setTimeout(this.compAction, 1000)) : -1;
     }
     resetGame() {
-        this.setState(Object.assign({}, this.infi, this.inst, this.insc));
+        this.initial();
+        this.score = {"player1": 0, "player2": 0, "draw": 0};
+        this.setState({});
         document.getElementById('choiceplayer').classList.remove('dispnone');
         document.getElementById('pl1').classList.remove('turn');
         document.getElementById('pl2').classList.remove ('turn');
         document.getElementById('res').classList.add('visibnone');
     }
     render() {
-        var state = this.state;
-        var fields = state.fields;
+        var fields = this.fields;
         return (
             <div className="mainboard">
                 <div className="scoreboard">
                     <div id="pl1" className="score_header">Player 1</div>
                     <div id="pl2" className="score_header">Player 2</div>
                     <div className="score_header">Draw :)</div>
-                    <div className="score_body">{state.score.player1}</div>
-                    <div className="score_body">{state.score.player2}</div>
-                    <div className="score_body">{state.score.draw}</div>
+                    <div className="score_body">{this.score.player1}</div>
+                    <div className="score_body">{this.score.player2}</div>
+                    <div className="score_body">{this.score.draw}</div>
                 </div>
                 <div className="fieldsboard">
                     <div id="choiceplayer">
@@ -200,7 +251,8 @@ class Game extends React.Component {
                             <div className="backarrow" onClick={this.goBack}>⇦ back</div>
                         </div>
                     </div>
-                    <div id="winmess" className="dispnone"><div className="textmess wintop">{state.status.message}</div></div>
+                    <div id="winmess" className="dispnone"><div className="textmess wintop">{this.status.message}</div></div>
+                    <div id="compthink" className="dispnone"><div className="textmess wintop">Comp's turn</div></div>
                     <table>
                         <tbody>
                             <tr>

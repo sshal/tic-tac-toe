@@ -80,7 +80,7 @@ td {
     0% {opacity: 1;}
     100% {opacity: 0;}
 }
-#winmess, #choicesign, #choiceplayer {
+#winmess, #choicesign, #choiceplayer, #compthink {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -92,6 +92,10 @@ td {
 }
 #winmess {
     opacity: 0;
+}
+#compthink {
+    opacity: 0.8;
+    z-index: 4;
 }
 .hidequestion {
     animation: hidemess 0.5s linear;
@@ -114,7 +118,7 @@ td {
     top: 10%;
 }
 .signs {
-    padding: 0 15px;
+    padding: 0 20px;
     font-size: 1.4em;
 }
 .pl:hover, .signs:hover, .backarrow:hover, .butreset:hover {

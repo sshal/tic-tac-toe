@@ -20788,164 +20788,39 @@ var Game = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (Game.__proto__ || Object.getPrototypeOf(Game)).call(this, props));
 
-        _this.infi = {
-            "fields": {
-                "a1": null,
-                "a2": null,
-                "a3": null,
-                "b1": null,
-                "b2": null,
-                "b3": null,
-                "c1": null,
-                "c2": null,
-                "c3": null
-            }
-        };
-        _this.inst = {
-            "status": {
-                "sign": "X",
-                "turn": "Player1",
-                "count": 0,
-                "winner": "",
-                "wincombo": "",
-                "message": ""
-            }
-        };
-        _this.insc = {
-            "score": {
-                "player1": 0,
-                "player2": 0,
-                "draw": 0
-            }
-        };
-        _this.state = Object.assign({}, _this.infi, _this.inst, _this.insc);
+        _this.fields = { "a1": "", "a2": "", "a3": "", "b1": "", "b2": "",
+            "b3": "", "c1": "", "c2": "", "c3": "" };
+        _this.status = { "sign": "X", "turn": "Player1", "message": "" };
+        _this.history = [];
+        _this.score = { "player1": 0, "player2": 0, "draw": 0 };
         _this.combinations = [["a1", "a2", "a3"], ["b1", "b2", "b3"], ["c1", "c2", "c3"], ["a1", "b1", "c1"], ["a2", "b2", "c2"], ["a3", "b3", "c3"], ["a1", "b2", "c3"], ["a3", "b2", "c1"]];
-        _this.makeChoice = _this.makeChoice.bind(_this);
-        _this.clearBoard = _this.clearBoard.bind(_this);
-        _this.checkWinner = _this.checkWinner.bind(_this);
-        _this.toggleMessage = _this.toggleMessage.bind(_this);
-        _this.changeTurn = _this.changeTurn.bind(_this);
-        _this.setupTurn = _this.setupTurn.bind(_this);
+        _this.initial = _this.initial.bind(_this);
         _this.setupOppo = _this.setupOppo.bind(_this);
         _this.goBack = _this.goBack.bind(_this);
+        _this.setupTurn = _this.setupTurn.bind(_this);
+        _this.makeChoice = _this.makeChoice.bind(_this);
+        _this.changeTurn = _this.changeTurn.bind(_this);
+        _this.compAction = _this.compAction.bind(_this);
+        _this.checkWinner = _this.checkWinner.bind(_this);
+        _this.toggleMessage = _this.toggleMessage.bind(_this);
+        _this.clearBoard = _this.clearBoard.bind(_this);
         _this.resetGame = _this.resetGame.bind(_this);
         return _this;
     }
 
     _createClass(Game, [{
-        key: "setupOppo",
-        value: function setupOppo(e) {
-            var state = Object.assign({}, this.state);
-            if (e.target.innerText === "Computer") {
-                state.comp = true;
-            } else {
-                state.comp = false;
-            }
-            this.setState(state);
-            document.getElementById('choiceplayer').classList.add('dispnone');
-            document.getElementById('choicesign').classList.remove('dispnone');
-        }
-    }, {
-        key: "goBack",
-        value: function goBack() {
-            document.getElementById('choicesign').classList.add('dispnone');
-            document.getElementById('choiceplayer').classList.remove('dispnone');
-        }
-    }, {
-        key: "setupTurn",
-        value: function setupTurn(e) {
-            var status = Object.assign({}, this.state.status);
-            if (e.target.innerText === "X") {
-                status.turn = "Player1";
-                this.setState({ "firstX": true });
-                document.getElementById('pl1').classList.add('turn');
-            } else {
-                status.turn = "Player2";
-                this.setState({ "firstX": false });
-                document.getElementById('pl2').classList.add('turn');
-            }
-            this.setState({ "status": status });
-            document.getElementById('choicesign').classList.add('hidequestion');
-            setTimeout(function () {
-                document.getElementById('choicesign').classList.add('dispnone');
-                document.getElementById('choicesign').classList.remove('hidequestion');
-                document.getElementById('res').classList.remove('visibnone');
-            }, 500);
-        }
-    }, {
-        key: "makeChoice",
-        value: function makeChoice(e) {
-            var temp = e.target.id,
-                fields = Object.assign({}, this.state.fields),
-                status = Object.assign({}, this.state.status);
-            if (fields[temp] === null) {
-                fields[temp] = status.sign;
-                status.count += 1;
-                this.setState({ fields: fields, status: status }, this.checkWinner);
-            }
-        }
-    }, {
-        key: "changeTurn",
-        value: function changeTurn(st) {
-            if (st === "Player1") {
-                document.getElementById('pl2').classList.remove('turn');
-                document.getElementById('pl1').classList.add('turn');
-            } else {
-                document.getElementById('pl2').classList.add('turn');
-                document.getElementById('pl1').classList.remove('turn');
-            }
-        }
-    }, {
-        key: "checkWinner",
-        value: function checkWinner() {
-            var fields = Object.assign({}, this.state.fields),
-                score = Object.assign({}, this.state.score),
-                status = Object.assign({}, this.state.status);
+        key: "initial",
+        value: function initial() {
+            this.status = { "sign": "X", "turn": "Player1", "message": "" };
             var _iteratorNormalCompletion = true;
             var _didIteratorError = false;
             var _iteratorError = undefined;
 
             try {
-                for (var _iterator = this.combinations[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var comb = _step.value;
+                for (var _iterator = Object.keys(this.fields)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var key = _step.value;
 
-                    if (fields[comb[0]] && fields[comb[0]] === fields[comb[1]] && fields[comb[1]] === fields[comb[2]]) {
-                        status.wincombo = comb;
-                        var _iteratorNormalCompletion2 = true;
-                        var _didIteratorError2 = false;
-                        var _iteratorError2 = undefined;
-
-                        try {
-                            for (var _iterator2 = status.wincombo[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                                var cell = _step2.value;
-
-                                document.getElementById(cell).classList.add('winner');
-                            }
-                        } catch (err) {
-                            _didIteratorError2 = true;
-                            _iteratorError2 = err;
-                        } finally {
-                            try {
-                                if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                                    _iterator2.return();
-                                }
-                            } finally {
-                                if (_didIteratorError2) {
-                                    throw _iteratorError2;
-                                }
-                            }
-                        }
-
-                        if (status.turn === "Player1") {
-                            status.winner = "Player1";
-                            score.player1 += 1;
-                            status.message = "Player 1 wins!";
-                        } else {
-                            status.winner = "Player2";
-                            score.player2 += 1;
-                            status.message = "Player 2 wins!";
-                        }
-                    }
+                    this.fields[key] = "";
                 }
             } catch (err) {
                 _didIteratorError = true;
@@ -20962,24 +20837,315 @@ var Game = function (_React$Component) {
                 }
             }
 
-            if (status.count === 9 && status.winner === "") {
-                status.winner = "Draw";
-                score.draw += 1;
+            this.history = [];
+        }
+    }, {
+        key: "setupOppo",
+        value: function setupOppo(e) {
+            this.comp = e.target.innerText === "Computer" ? true : false;
+            document.getElementById('choiceplayer').classList.add('dispnone');
+            document.getElementById('choicesign').classList.remove('dispnone');
+        }
+    }, {
+        key: "goBack",
+        value: function goBack() {
+            document.getElementById('choicesign').classList.add('dispnone');
+            document.getElementById('choiceplayer').classList.remove('dispnone');
+        }
+    }, {
+        key: "setupTurn",
+        value: function setupTurn(e) {
+            this.initial();
+            var status = this.status;
+            if (e.target.innerText === "X") {
+                this.firstX = true;
+                status.turn = "Player1";
+                document.getElementById('pl1').classList.add('turn');
+            } else {
+                this.firstX = false;
+                status.turn = "Player2";
+                document.getElementById('pl2').classList.add('turn');
+            }
+            this.comp && !this.firstX ? (document.getElementById('compthink').classList.remove('dispnone'), setTimeout(this.compAction, 1000)) : -1;
+            this.setState({});
+            document.getElementById('choicesign').classList.add('hidequestion');
+            setTimeout(function () {
+                document.getElementById('choicesign').classList.add('dispnone');
+                document.getElementById('choicesign').classList.remove('hidequestion');
+                document.getElementById('res').classList.remove('visibnone');
+            }, 500);
+        }
+    }, {
+        key: "makeChoice",
+        value: function makeChoice(e) {
+            var variant = e.target.id,
+                fields = this.fields;
+            if (!fields[variant]) {
+                fields[variant] = this.status.sign;
+                this.history.push(variant);
+                this.checkWinner();
+            }
+        }
+    }, {
+        key: "changeTurn",
+        value: function changeTurn() {
+            this.status.sign = this.status.sign === "X" ? "O" : "X";
+            this.status.turn = this.status.turn === "Player1" ? "Player2" : "Player1";
+            if (this.status.turn === "Player1") {
+                document.getElementById('pl2').classList.remove('turn');
+                document.getElementById('pl1').classList.add('turn');
+            } else {
+                document.getElementById('pl2').classList.add('turn');
+                document.getElementById('pl1').classList.remove('turn');
+            }
+        }
+    }, {
+        key: "compAction",
+        value: function compAction() {
+            var fields = this.fields,
+                status = this.status,
+                history = this.history,
+                majorcells = ["a1", "a3", "c1", "c3", "b2"],
+                othercells = ["a2", "b1", "b3", "c2"],
+                pos = "";
+            if (history.length === 0) {
+                pos = majorcells[Math.floor(Math.random() * 5)];
+            } else if (history.length !== 0 && !fields["b2"]) {
+                pos = "b2";
+            } else {
+                var result = [];
+                var _iteratorNormalCompletion2 = true;
+                var _didIteratorError2 = false;
+                var _iteratorError2 = undefined;
+
+                try {
+                    for (var _iterator2 = this.combinations[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                        var comb = _step2.value;
+
+                        var full = [],
+                            emp = [];
+                        var _iteratorNormalCompletion5 = true;
+                        var _didIteratorError5 = false;
+                        var _iteratorError5 = undefined;
+
+                        try {
+                            for (var _iterator5 = comb[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                                var el = _step5.value;
+
+                                history.includes(el) ? full.push(el) : emp.push(el);
+                            }
+                        } catch (err) {
+                            _didIteratorError5 = true;
+                            _iteratorError5 = err;
+                        } finally {
+                            try {
+                                if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                                    _iterator5.return();
+                                }
+                            } finally {
+                                if (_didIteratorError5) {
+                                    throw _iteratorError5;
+                                }
+                            }
+                        }
+
+                        if (full.length === 2 && fields[full[0]] === fields[full[1]]) {
+                            result.push([full, emp]);
+                        }
+                    }
+                } catch (err) {
+                    _didIteratorError2 = true;
+                    _iteratorError2 = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                            _iterator2.return();
+                        }
+                    } finally {
+                        if (_didIteratorError2) {
+                            throw _iteratorError2;
+                        }
+                    }
+                }
+
+                if (!result.length) {
+                    var emMaj = majorcells.filter(function (a) {
+                        return !fields[a];
+                    });
+                    var emOth = othercells.filter(function (a) {
+                        return !fields[a];
+                    });
+                    if (this.firstX && history.length === 3) {
+                        var h0 = history[0],
+                            h2 = history[2];
+                        if (fields["b2"] !== "X" && majorcells.includes(h0) && majorcells.includes(h2)) {
+                            pos = emOth[Math.floor(Math.random() * emOth.length)];
+                        } //exclude player's win (1/3)
+                        else if (majorcells.includes(h0) && othercells.includes(h2) || othercells.includes(h0) && majorcells.includes(h2)) {
+                                var temp = othercells.includes(h0) ? h0 : h2;
+                                switch (temp) {
+                                    case "a2":
+                                        pos = "a1";
+                                        break;
+                                    case "b1":
+                                        pos = "c1";
+                                        break;
+                                    case "c2":
+                                        pos = "c3";
+                                        break;
+                                    case "b3":
+                                        pos = "a3";
+                                }
+                            } else {
+                                pos = emMaj[Math.floor(Math.random() * emMaj.length)];
+                            }
+                    } else {
+                        pos = emMaj.length ? emMaj[Math.floor(Math.random() * emMaj.length)] : emOth[Math.floor(Math.random() * emOth.length)];
+                    }
+                } else {
+                    var _iteratorNormalCompletion3 = true;
+                    var _didIteratorError3 = false;
+                    var _iteratorError3 = undefined;
+
+                    try {
+                        for (var _iterator3 = result[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                            var variant = _step3.value;
+
+                            fields[variant[0][0]] === status.sign ? pos = variant[1][0] : -1;
+                        }
+                    } catch (err) {
+                        _didIteratorError3 = true;
+                        _iteratorError3 = err;
+                    } finally {
+                        try {
+                            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                                _iterator3.return();
+                            }
+                        } finally {
+                            if (_didIteratorError3) {
+                                throw _iteratorError3;
+                            }
+                        }
+                    }
+
+                    if (!pos) {
+                        var _iteratorNormalCompletion4 = true;
+                        var _didIteratorError4 = false;
+                        var _iteratorError4 = undefined;
+
+                        try {
+                            for (var _iterator4 = result[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                                var variant = _step4.value;
+
+                                fields[variant[0][0]] !== status.sign ? pos = variant[1][0] : -1;
+                            }
+                        } catch (err) {
+                            _didIteratorError4 = true;
+                            _iteratorError4 = err;
+                        } finally {
+                            try {
+                                if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                                    _iterator4.return();
+                                }
+                            } finally {
+                                if (_didIteratorError4) {
+                                    throw _iteratorError4;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            fields[pos] = status.sign;
+            history.push(pos);
+            document.getElementById('compthink').classList.add('dispnone');
+            this.setState({}, this.checkWinner);
+        }
+    }, {
+        key: "checkWinner",
+        value: function checkWinner() {
+            var fields = this.fields,
+                status = this.status;
+            var _iteratorNormalCompletion6 = true;
+            var _didIteratorError6 = false;
+            var _iteratorError6 = undefined;
+
+            try {
+                for (var _iterator6 = this.combinations[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                    var comb = _step6.value;
+
+                    if (fields[comb[0]] && fields[comb[0]] === fields[comb[1]] && fields[comb[1]] === fields[comb[2]]) {
+                        var _iteratorNormalCompletion7 = true;
+                        var _didIteratorError7 = false;
+                        var _iteratorError7 = undefined;
+
+                        try {
+                            var _loop = function _loop() {
+                                var cell = _step7.value;
+
+                                document.getElementById(cell).classList.add('winner');
+                                setTimeout(function () {
+                                    document.getElementById(cell).classList.remove('winner');
+                                }, 4500);
+                            };
+
+                            for (var _iterator7 = comb[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+                                _loop();
+                            }
+                        } catch (err) {
+                            _didIteratorError7 = true;
+                            _iteratorError7 = err;
+                        } finally {
+                            try {
+                                if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                                    _iterator7.return();
+                                }
+                            } finally {
+                                if (_didIteratorError7) {
+                                    throw _iteratorError7;
+                                }
+                            }
+                        }
+
+                        if (status.turn === "Player1") {
+                            this.score.player1 += 1;
+                            status.message = "Player 1 wins!";
+                        } else {
+                            this.score.player2 += 1;
+                            status.message = "Player 2 wins!";
+                        }
+                    }
+                }
+            } catch (err) {
+                _didIteratorError6 = true;
+                _iteratorError6 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                        _iterator6.return();
+                    }
+                } finally {
+                    if (_didIteratorError6) {
+                        throw _iteratorError6;
+                    }
+                }
+            }
+
+            if (this.history.length === 9 && status.message === "") {
+                this.score.draw += 1;
                 status.message = "Draw, Friends! :)";
             }
-            if (!status.winner) {
-                status.sign = status.sign === "X" ? "O" : "X";
-                status.turn = status.turn === "Player1" ? "Player2" : "Player1";
-                this.changeTurn(status.turn);
+            !status.message ? this.changeTurn() : -1;
+            if (status.message) {
+                this.toggleMessage();
+                document.getElementById('res').classList.add('visibnone');
+                setTimeout(this.toggleMessage, 4500);
+                setTimeout(this.clearBoard, 4500);
+            } else if (this.comp === true && status.turn === "Player2") {
+                document.getElementById('compthink').classList.remove('dispnone');
+                setTimeout(this.compAction, 1000);
             }
-            this.setState({ fields: fields, score: score, status: status }, function () {
-                if (this.state.status.winner) {
-                    this.toggleMessage();
-                    document.getElementById('res').classList.add('visibnone');
-                    setTimeout(this.toggleMessage, 4500);
-                    setTimeout(this.clearBoard, 4500);
-                }
-            });
+            this.setState({});
         }
     }, {
         key: "toggleMessage",
@@ -20993,41 +21159,20 @@ var Game = function (_React$Component) {
     }, {
         key: "clearBoard",
         value: function clearBoard() {
-            var copyCombo = this.state.status.wincombo.slice(0);
-            var _iteratorNormalCompletion3 = true;
-            var _didIteratorError3 = false;
-            var _iteratorError3 = undefined;
-
-            try {
-                for (var _iterator3 = copyCombo[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                    var cell = _step3.value;
-
-                    document.getElementById(cell).classList.remove('winner');
-                }
-            } catch (err) {
-                _didIteratorError3 = true;
-                _iteratorError3 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                        _iterator3.return();
-                    }
-                } finally {
-                    if (_didIteratorError3) {
-                        throw _iteratorError3;
-                    }
-                }
-            }
-
-            var state = Object.assign({}, this.infi, this.inst);
-            state.status.turn = this.state.firstX ? "Player1" : "Player2";
-            this.setState(state, this.changeTurn(state.status.turn));
+            this.initial();
+            this.status.turn = this.firstX ? "Player1" : "Player2";
+            this.setState({}, function () {
+                document.getElementById("pl" + this.status.turn[6]).classList.add('turn');
+            });
             document.getElementById('res').classList.remove('visibnone');
+            this.comp && !this.firstX ? (document.getElementById('compthink').classList.remove('dispnone'), setTimeout(this.compAction, 1000)) : -1;
         }
     }, {
         key: "resetGame",
         value: function resetGame() {
-            this.setState(Object.assign({}, this.infi, this.inst, this.insc));
+            this.initial();
+            this.score = { "player1": 0, "player2": 0, "draw": 0 };
+            this.setState({});
             document.getElementById('choiceplayer').classList.remove('dispnone');
             document.getElementById('pl1').classList.remove('turn');
             document.getElementById('pl2').classList.remove('turn');
@@ -21036,8 +21181,7 @@ var Game = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var state = this.state;
-            var fields = state.fields;
+            var fields = this.fields;
             return React.createElement(
                 "div",
                 { className: "mainboard" },
@@ -21062,17 +21206,17 @@ var Game = function (_React$Component) {
                     React.createElement(
                         "div",
                         { className: "score_body" },
-                        state.score.player1
+                        this.score.player1
                     ),
                     React.createElement(
                         "div",
                         { className: "score_body" },
-                        state.score.player2
+                        this.score.player2
                     ),
                     React.createElement(
                         "div",
                         { className: "score_body" },
-                        state.score.draw
+                        this.score.draw
                     )
                 ),
                 React.createElement(
@@ -21137,7 +21281,16 @@ var Game = function (_React$Component) {
                         React.createElement(
                             "div",
                             { className: "textmess wintop" },
-                            state.status.message
+                            this.status.message
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { id: "compthink", className: "dispnone" },
+                        React.createElement(
+                            "div",
+                            { className: "textmess wintop" },
+                            "Comp's turn"
                         )
                     ),
                     React.createElement(
